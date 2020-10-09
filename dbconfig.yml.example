@@ -1,0 +1,5 @@
+dev:
+  dialect: mysql
+  datasource: root:@tcp(127.0.0.1:3306)/dice?parseTime=true
+  dir: database/mysql/migrations
+  table: go_migrations
