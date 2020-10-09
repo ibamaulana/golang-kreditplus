@@ -10,52 +10,103 @@
 
     <!-- Theme CSS -->
     <link rel="stylesheet" href="/static/css/theme.min.css">
-      
+    <link rel="stylesheet" href="/static/css/dice.css">  
     <!-- Title -->
     <title>Roll The Dice</title>
 
   </head>
-  <body class="d-flex align-items-center bg-auth border-top border-top-2 border-primary bg-primary">
+  <body class="d-flex  bg-auth border-top border-top-2 border-primary bg-primary">
 
     <!-- CONTENT
     ================================================== -->
     <div class="container">
-      <div class="row justify-content-center">
-        <div class="col-12">
-          <h1 class="text-white text-center mb-3" style="font-size: 50pt;">
+      <div class="row  mt-6">
+        <div class="col-12 ">
+          <h1 class="text-white text-left mb-3" style="font-size: 30pt;">
             Roll The Dice
            </h1>
         </div>
-        <div class="col-12 col-md-5 col-xl-4 my-5">
+        <div class="col-12" id="gamecontainer" style="display: none;">
+          <div class="row">
+            <div class="col-4 my-5">
+              <h1 class="text-white">Round : <span id="round">1</span></h1>
+              <div class="row" id="playerlist">
+                
+              </div>
+            </div>
+            <div class="col-8 mt-5">
+              <div class="dice" style="box-sizing: unset;"> 
+                <ol class="die-list even-roll" data-roll="1" id="die-1">
+                  <li class="die-item" data-side="1">
+                    <span class="dot"></span>
+                  </li>
+                  <li class="die-item" data-side="2">
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                  </li>
+                  <li class="die-item" data-side="3">
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                  </li>
+                  <li class="die-item" data-side="4">
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                  </li>
+                  <li class="die-item" data-side="5">
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                  </li>
+                  <li class="die-item" data-side="6">
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                  </li>
+                </ol>
+              </div>
+            </div>
+          </div>
+          
+        </div>
+        
+        <div class="col-12 col-md-5 col-xl-4 my-5" id="inputcontainer">
           <div class="card">
-            <div class="card-body">
+            <div class="card-body" id="inputnumber">
               <p class="text-muted text-center mb-5">
-                Please input name of 4 player
+                Please input number of players
               </p>
               <form>
                 <div class="form-group">
                   <!-- Label -->
-                  <label>Player 1</label>
-                  <input type="text" class="form-control" placeholder="Player 1...">
-                </div>
-                <div class="form-group">
-                  <!-- Label -->
-                  <label>Player 2</label>
-                  <input type="text" class="form-control" placeholder="Player 2...">
-                </div>
-                <div class="form-group">
-                  <!-- Label -->
-                  <label>Player 3</label>
-                  <input type="text" class="form-control" placeholder="Player 3...">
-                </div>
-                <div class="form-group">
-                  <!-- Label -->
-                  <label>Player 4</label>
-                  <input type="text" class="form-control" placeholder="Player 4...">
+                  <input type="number" class="form-control" id="playernumber" placeholder="Number of players" min="2" required>
                 </div>
     
                 <!-- Submit -->
-                <button class="btn btn-lg btn-block btn-primary mb-3">
+                <button class="btn btn-lg btn-block btn-primary mb-3" type="button" onclick="submitnumber()">
+                  Submit
+                </button>
+                
+              </form>
+    
+            </div>
+            <div class="card-body" id="inputplayer" style="display: none;">
+              <p class="text-muted text-center mb-5">
+                Please input players name
+              </p>
+              <form>
+                <div class="form-group" id="playercontainer">
+                </div>
+    
+                <!-- Submit -->
+                <button class="btn btn-lg btn-block btn-primary mb-3" type="button" onclick="submitplayer()">
                   Play The Game
                 </button>
                 
@@ -76,5 +127,109 @@
     <script src="/static/libs/select2/dist/js/select2.full.min.js"></script>
     <script src="/static/js/theme.min.js"></script>
     <script src="/static/js/dashkit.min.js"></script>
+    <script type="text/javascript">
+      var playernumber = 0
+      var round = 1
+      var players = []
+
+      function submitnumber(){
+        playernumber = $('#playernumber').val();
+
+        $('#inputnumber').slideUp();
+        setTimeout(() => {
+         $('#inputplayer').slideDown();
+        }, 500);
+        for (let index = 0; index < playernumber; index++) {
+          $('#playercontainer').append(
+            `<input type="text" class="form-control mb-4" id="player${index}" placeholder="Player ${index+1} ..." required>`
+          )
+          
+        }
+      }
+
+      function submitplayer(){
+        $('#inputcontainer').slideUp();
+        setTimeout(() => {
+         $('#gamecontainer').slideDown();
+        }, 500);
+        for (let index = 0; index < playernumber; index++) {
+          players.push({
+            name: $('#player'+index).val(),
+            score: 0,
+            active: index == 0 ? 1 : 0
+          })
+        }
+        players.forEach((element, index) => {
+          $('#playerlist').append(
+            `<div class="col-12">
+              <div class="card">
+                <div class="card-body" id="inputnumber">
+                  <h1>${element.name} </h1>
+                  <p >Score : <span id="score${index}">${element.score}</span></p>
+                  <button class="btn btn-primary btn-block" type="button" id="btn${index}" onclick="rollDice(${index})" ${element.active == 1 ? '' : 'disabled'}>Roll</button>
+                </div>
+              </div>
+            </div>`
+          )
+        })
+      }
+
+      function rollDice(index) {
+        const dice = [...document.querySelectorAll(".die-list")];
+        dice.forEach(die => {
+          toggleClasses(die);
+          die.dataset.roll = getRandomNumber(1, 6);
+          setTimeout(() => {
+            if(die.dataset.roll == 1 || die.dataset.roll == 3 || die.dataset.roll == 5 ){
+              players[index].score = players[index].score+10
+            }else{
+              players[index].score = players[index].score-5
+            }
+            //updatescore
+            $('#score'+index).html(players[index].score)
+            nextround(index)
+          }, 1500);
+        });
+      }
+
+      function nextround(index){
+        var totalplayer = players.length-1;
+        if(index != totalplayer){
+          $('#btn'+index).attr('disabled',true)
+          $('#btn'+(index+1)).attr('disabled',false)
+        }else{
+          $('#btn'+index).attr('disabled',true)
+          $('#btn0').attr('disabled',false)
+          round = round+1
+          if(round != 5){
+            $('#round').html(round)
+          }else{
+            var max = players.reduce(function(a, b) {
+              console.log(a,b,max)
+                if(a.score > b.score){
+                  return a
+                }else{
+                  return b
+                }
+            });
+            alert('Game over ! The winner is : '+max.name)
+          }
+        }
+      }
+
+      function toggleClasses(die) {
+        die.classList.toggle("odd-roll");
+        die.classList.toggle("even-roll");
+      }
+
+      function getRandomNumber(min, max) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+      
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+      }
+
+
+    </script>
   </body>
 </html>
